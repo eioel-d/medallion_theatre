@@ -4,6 +4,8 @@ frontend/node_modules
 
 # Database file (we don't want to push this)
 backend/medallion.db
+backend/medallion.db-shm
+backend/medallion.db-wal
 
 # Environment variables (if we add them later)
 .env
