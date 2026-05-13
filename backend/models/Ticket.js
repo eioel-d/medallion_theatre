@@ -66,6 +66,7 @@ class Ticket {
       JOIN seats ON tickets.seat_id = seats.seat_id
       JOIN performances ON tickets.performance_id = performances.performance_id
       JOIN shows ON performances.production_id = shows.show_id
+      WHERE tickets.patron_id = ?
     `,
       )
       .all(patron_id);
@@ -83,8 +84,8 @@ class Ticket {
         patrons.first_name,
         patrons.last_name
       FROM tickets
-      JOIN seats ON ticket.seat_id = seats.seat_id
-      JOIN paatrons ON tickets.patron_id patrons.patron_id
+      JOIN seats ON tickets.seat_id = seats.seat_id
+      JOIN patrons ON tickets.patron_id = patrons.patron_id
       WHERE tickets.performance_id = ?
     `,
       )
@@ -101,24 +102,23 @@ class Ticket {
       .all(performance_id);
   }
 
-  static create(ticket) {
+  static create(performance_id, seat_ids, patron_id) {
     const stmt = db.prepare(`
-      INSERT INTO tickets (performance_id, seat_id, patron_id, purchase_date)
-      VALUES (?, ?, ?, ?)
-    `);
-    const result = stmt.run(
-      ticket.performance_id,
-      ticket.seat_id,
-      ticket.patron_id,
-      new Date().toISOString(),
-    );
-    return result.lastInsertRowid;
-  }
+    INSERT INTO tickets (performance_id, seat_id, patron_id, purchase_date)
+    VALUES (?, ?, ?, ?)
+  `);
 
+    const insert = db.transaction((seats) => {
+      for (const seat_id of seats) {
+        stmt.run(performance_id, seat_id, patron_id, new Date().toISOString());
+      }
+    });
+
+    insert(seat_ids);
+  }
   static delete(ticket_id) {
     return db.prepare("DELETE FROM tickets WHERE ticket_id = ?").run(ticket_id);
   }
 }
 
 export default Ticket;
-

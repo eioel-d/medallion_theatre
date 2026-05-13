@@ -8,7 +8,6 @@ router.get("/", (req, res) => {
   res.json(tickets);
 });
 
-
 router.get("/patron/:patron_id", (req, res) => {
   const tickets = Ticket.getByPatron(req.params.patron_id);
   res.json(tickets);
@@ -25,8 +24,9 @@ router.get("/sold/:performance_id", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  const id = Ticket.create(req.body);
-  res.status(201).json({ message: "Ticket created", ticket_id: id });
+  const { performance_id, seat_ids, patron_id } = req.body;
+  Ticket.create(performance_id, seat_ids, patron_id);
+  res.status(201).json({ message: `${seat_ids.length} tickets created!` });
 });
 
 router.delete("/:id", (req, res) => {
@@ -42,6 +42,4 @@ router.get("/:id", (req, res) => {
   res.json(ticket);
 });
 
-
 export default router;
-

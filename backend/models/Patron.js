@@ -48,8 +48,9 @@ class Patron {
   }
 
   static delete(patron_id) {
-    return db.prepare("DELET FROM patrons WHERE patron_id=?").run(patron_id);
+    return db.prepare("DELETE FROM patrons WHERE patron_id=?").run(patron_id);
   }
 }
 
-export default Patron
+export default Patron;
+

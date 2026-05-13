@@ -52,7 +52,7 @@ const stmt = db.prepare(
 
 let count = 0;
 for (const seat of seats) {
-  stmt.run(seat.seat_number, seat.seat_category, seat.seat_price);
+  stmt.run(seat.seat_number, seat.category, seat.price);
   count++;
 }
 
